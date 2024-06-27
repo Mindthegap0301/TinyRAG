@@ -69,7 +69,6 @@ class InternLMChat(BaseModel):
         response, history = self.model.chat(self.tokenizer, prompt, history)
         return response
 
-
     def load_model(self):
         import torch
         from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -111,3 +110,26 @@ class ZhipuChat(BaseModel):
             temperature=0.1
         )
         return response.choices[0].message
+    
+class ErnieChat(BaseModel):
+    def __init__(self, path: str = '',model:str = "ernie-lite-8k") -> None:
+        super().__init__(path)
+        self.model = model
+        
+    def chat(self, prompt: str, history: List[Dict], content: str) -> str:
+        import qianfan
+        # todo : set the access key and secret key on the environment variable
+        os.environ["QIANFAN_AK"] = "htCbOFKueLwedn5id4ptjCuA"
+        os.environ["QIANFAN_SK"] = "ONTWRTuS1orWD7n4Dt0dnGKKGr4C9W09"
+        history.append({'role': 'user', 'content': PROMPT_TEMPLATE['RAG_PROMPT_TEMPALTE'].format(question=prompt, context=content)})
+        
+        response = qianfan.ChatCompletion().do(
+            endpoint=self.model,
+            messages=history,
+            max_output_tokens=150,
+            temperature=0.1,
+            top_p=0.7, 
+            penalty_score=1,
+        )
+        
+        return response.body
