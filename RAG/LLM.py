@@ -119,8 +119,10 @@ class ErnieChat(BaseModel):
     def chat(self, prompt: str, history: List[Dict], content: str) -> str:
         import qianfan
         # todo : set the access key and secret key on the environment variable
+        '''
         os.environ["QIANFAN_AK"] = "htCbOFKueLwedn5id4ptjCuA"
         os.environ["QIANFAN_SK"] = "ONTWRTuS1orWD7n4Dt0dnGKKGr4C9W09"
+        '''
         history.append({'role': 'user', 'content': PROMPT_TEMPLATE['RAG_PROMPT_TEMPALTE'].format(question=prompt, context=content)})
         
         response = qianfan.ChatCompletion().do(
