@@ -132,4 +132,4 @@ class ErnieChat(BaseModel):
             penalty_score=1,
         )
         
-        return response.body
+        return response['body']['result']
